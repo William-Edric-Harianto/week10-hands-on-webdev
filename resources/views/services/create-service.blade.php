@@ -23,6 +23,9 @@
                     value="{{ old('name') }}"
                     required
                 >
+                @error('name')
+                    <p class="error">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -35,6 +38,9 @@
                     maxlength="1000"
                     required
                 >{{ old('description') }}</textarea>
+                @error('description')
+                    <p class="error">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="actions">

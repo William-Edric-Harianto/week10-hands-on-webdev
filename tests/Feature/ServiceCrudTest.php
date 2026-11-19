@@ -106,4 +106,46 @@ class ServiceCrudTest extends TestCase
             'id' => $service->id,
         ]);
     }
+
+    public function test_service_store_validates_input(): void
+    {
+        $emptyResponse = $this->from(route('create-service'))->post(route('store-service'), [
+            'name' => '',
+            'description' => '',
+        ]);
+
+        $emptyResponse->assertRedirect(route('create-service'));
+        $emptyResponse->assertSessionHasErrors(['name', 'description']);
+        $this->assertDatabaseCount('services', 0);
+
+        $tooLongResponse = $this->from(route('create-service'))->post(route('store-service'), [
+            'name' => str_repeat('a', 101),
+            'description' => str_repeat('b', 1001),
+        ]);
+
+        $tooLongResponse->assertRedirect(route('create-service'));
+        $tooLongResponse->assertSessionHasErrors(['name', 'description']);
+        $this->assertDatabaseCount('services', 0);
+    }
+
+    public function test_service_update_validates_input(): void
+    {
+        $service = Service::factory()->create([
+            'name' => 'Original Service',
+            'description' => 'Original description.',
+        ]);
+
+        $response = $this->from(route('edit-service', $service))->post(route('update-service', $service), [
+            'name' => '',
+            'description' => str_repeat('b', 1001),
+        ]);
+
+        $response->assertRedirect(route('edit-service', $service));
+        $response->assertSessionHasErrors(['name', 'description']);
+        $this->assertDatabaseHas('services', [
+            'id' => $service->id,
+            'name' => 'Original Service',
+            'description' => 'Original description.',
+        ]);
+    }
 }

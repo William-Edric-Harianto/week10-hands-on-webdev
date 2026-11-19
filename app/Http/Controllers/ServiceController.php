@@ -30,10 +30,12 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
-        Service::create([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
+        $data = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'required|string|max:1000',
         ]);
+
+        Service::create($data);
 
         return redirect()->route('service-list');
     }
@@ -51,10 +53,12 @@ class ServiceController extends Controller
      */
     public function update(Request $request, Service $service)
     {
-        $service->update([
-            'name' => $request->input('name'),
-            'description' => $request->input('description'),
+        $data = $request->validate([
+            'name' => 'required|string|max:100',
+            'description' => 'required|string|max:1000',
         ]);
+
+        $service->update($data);
 
         return redirect()->route('service-list');
     }

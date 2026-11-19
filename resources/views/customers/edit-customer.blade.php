@@ -19,10 +19,14 @@
                     id="name"
                     name="name"
                     class="form-control"
+                    minlength="2"
                     maxlength="100"
                     value="{{ old('name', $customer->name) }}"
                     required
                 >
+                @error('name')
+                    <p class="error">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="form-group">
@@ -32,9 +36,14 @@
                     id="phone_number"
                     name="phone_number"
                     class="form-control"
+                    minlength="12"
                     maxlength="20"
                     value="{{ old('phone_number', $customer->phone_number) }}"
+                    required
                 >
+                @error('phone_number')
+                    <p class="error">{{ $message }}</p>
+                @enderror
             </div>
 
             <div class="actions">

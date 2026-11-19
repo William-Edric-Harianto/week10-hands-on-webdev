@@ -106,4 +106,53 @@ class CustomerCrudTest extends TestCase
             'id' => $customer->id,
         ]);
     }
+
+    public function test_customer_store_validates_input(): void
+    {
+        $response = $this->from(route('create-customer'))->post(route('store-customer'), [
+            'name' => 'A',
+            'phone_number' => '12345',
+        ]);
+
+        $response->assertRedirect(route('create-customer'));
+        $response->assertSessionHasErrors(['name', 'phone_number']);
+        $this->assertDatabaseCount('customers', 0);
+
+        $emptyResponse = $this->from(route('create-customer'))->post(route('store-customer'), [
+            'name' => '',
+            'phone_number' => '',
+        ]);
+
+        $emptyResponse->assertRedirect(route('create-customer'));
+        $emptyResponse->assertSessionHasErrors(['name', 'phone_number']);
+
+        $tooLongResponse = $this->from(route('create-customer'))->post(route('store-customer'), [
+            'name' => str_repeat('a', 101),
+            'phone_number' => str_repeat('1', 21),
+        ]);
+
+        $tooLongResponse->assertRedirect(route('create-customer'));
+        $tooLongResponse->assertSessionHasErrors(['name', 'phone_number']);
+    }
+
+    public function test_customer_update_validates_input(): void
+    {
+        $customer = Customer::factory()->create([
+            'name' => 'Original Name',
+            'phone_number' => '081234567890',
+        ]);
+
+        $response = $this->from(route('edit-customer', $customer))->post(route('update-customer', $customer), [
+            'name' => 'A',
+            'phone_number' => '12345',
+        ]);
+
+        $response->assertRedirect(route('edit-customer', $customer));
+        $response->assertSessionHasErrors(['name', 'phone_number']);
+        $this->assertDatabaseHas('customers', [
+            'id' => $customer->id,
+            'name' => 'Original Name',
+            'phone_number' => '081234567890',
+        ]);
+    }
 }

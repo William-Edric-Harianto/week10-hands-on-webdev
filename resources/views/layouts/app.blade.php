@@ -159,6 +159,11 @@
             outline: none;
             border-color: #0f172a;
         }
+        .error {
+            color: #dc2626;
+            font-size: 0.8125rem;
+            margin: 0.35rem 0 0;
+        }
         .empty-state {
             text-align: center;
             color: #64748b;

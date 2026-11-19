@@ -30,10 +30,12 @@ class CustomerController extends Controller
      */
     public function store(Request $request)
     {
-        Customer::create([
-            'name' => $request->input('name'),
-            'phone_number' => $request->input('phone_number'),
+        $data = $request->validate([
+            'name' => 'required|string|min:2|max:100',
+            'phone_number' => 'required|string|min:12|max:20',
         ]);
+
+        Customer::create($data);
 
         return redirect()->route('customer-list');
     }
@@ -51,10 +53,12 @@ class CustomerController extends Controller
      */
     public function update(Request $request, Customer $customer)
     {
-        $customer->update([
-            'name' => $request->input('name'),
-            'phone_number' => $request->input('phone_number'),
+        $data = $request->validate([
+            'name' => 'required|string|min:2|max:100',
+            'phone_number' => 'required|string|min:12|max:20',
         ]);
+
+        $customer->update($data);
 
         return redirect()->route('customer-list');
     }
